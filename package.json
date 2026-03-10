@@ -1,8 +1,8 @@
 {
   "name": "@sam-ael/medusa-plugin-mailer",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A MedusaJS 2 plugin for sending email notifications on store events with dashboard-managed templates.",
-  "author": "Samuel Ael (https://www.github.com/SAM-AEL)",
+  "author": "SAM-AEL (https://www.github.com/SAM-AEL)",
   "license": "MIT",
   "files": [
     ".medusa/server",
