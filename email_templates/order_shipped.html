@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .Subject }}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f6f6f6;
+            color: #333333;
+            -webkit-font-smoothing: antialiased;
+        }
+        .wrapper {
+            width: 100%;
+            background-color: #f6f6f6;
+            padding: 40px 16px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.04);
+        }
+        .header {
+            background-color: #ffffff;
+            padding: 40px 40px 30px;
+            text-align: center;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .header h1 {
+            color: #111827;
+            font-size: 24px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .body {
+            padding: 40px;
+        }
+        .greeting {
+            font-size: 18px;
+            font-weight: 400;
+            color: #111827;
+            margin-bottom: 20px;
+        }
+        .message {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #4b5563;
+            margin-bottom: 30px;
+        }
+        .info-box {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .info-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .info-row .label { color: #64748b; }
+        .info-row .value { color: #0f172a; font-weight: 500; }
+        .cta-container {
+            text-align: center;
+            margin: 35px 0 10px;
+        }
+        .cta-button {
+            display: inline-block;
+            background-color: #111827;
+            color: #ffffff !important;
+            text-decoration: none;
+            padding: 14px 32px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: background-color 0.2s;
+        }
+        .footer {
+            background-color: #f9fafb;
+            border-top: 1px solid #f3f4f6;
+            padding: 30px 40px;
+            text-align: center;
+        }
+        .footer p {
+            font-size: 13px;
+            color: #9ca3af;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="container">
+            <div class="header">
+                <h1>{{ .StoreName }}</h1>
+            </div>
+            <div class="body">
+                <p class="greeting">Your Order is on the Way!</p>
+                <p class="message">
+                    Hi {{ .first_name }},
+                    <br><br>
+                    Great news! Your order (#{{ .display_id }}) has been shipped and is on its way to you. 
+                    You can track your package using the tracking number below.
+                </p>
+                <div class="info-box">
+                    <div class="info-row">
+                        <span class="label">Courier</span>
+                        <span class="value">{{ .courier }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Tracking #</span>
+                        <span class="value">{{ .tracking_number }}</span>
+                    </div>
+                </div>
+                <!-- Optional Tracking CTA -->
+                <!-- <div class="cta-container"> -->
+                <!--    <a href="{{ .tracking_url }}" class="cta-button">Track Package</a> -->
+                <!-- </div> -->
+            </div>
+            <div class="footer">
+                <p>
+                    Sent to {{ .RecipientEmail }}.<br>
+                    Questions? Just reply to this email.
+                </p>
+                <p style="margin-top: 12px;">© {{ .StoreName }}.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
