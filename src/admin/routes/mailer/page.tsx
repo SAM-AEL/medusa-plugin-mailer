@@ -128,7 +128,7 @@ function MappingsSection() {
     const [loadingTemplates, setLoadingTemplates] = useState(false)
     const [senders, setSenders] = useState<any[]>([])
     const [form, setForm] = useState({
-        event_name: MEDUSA_EVENTS[0],
+        event_name: MAILER_EVENTS[0],
         template_name: "",
         sender_index: 1,
         subject: "",
@@ -175,7 +175,7 @@ function MappingsSection() {
 
     const resetForm = () => {
         setForm({
-            event_name: MEDUSA_EVENTS[0], template_name: "", sender_index: 1,
+            event_name: MAILER_EVENTS[0], template_name: "", sender_index: 1,
             subject: "", recipient_type: "customer_email", recipient_email: "", active: true,
         })
         setTemplateVars([{ ...EMPTY_VAR }])
@@ -277,7 +277,7 @@ function MappingsSection() {
                                 onChange={(e) => setForm({ ...form, event_name: e.target.value })}
                             />
                             <datalist id="medusa-events-list">
-                                {MEDUSA_EVENTS.map((e) => (
+                                {MAILER_EVENTS.map((e) => (
                                     <option key={e} value={e} />
                                 ))}
                             </datalist>
