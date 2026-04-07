@@ -1,4 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { ok } from "../../../../shared/http"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
     const host = process.env.MAILER_SMTP_HOST || ""
@@ -24,5 +25,5 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
         }
     }
 
-    res.json({ smtp, senders })
+    return ok(res, { smtp, senders })
 }

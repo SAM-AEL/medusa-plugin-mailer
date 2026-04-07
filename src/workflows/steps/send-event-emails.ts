@@ -8,6 +8,7 @@ import {
     resolveDataPath,
     resolveEmail,
 } from "../../shared/mailer-runtime"
+import { isValidEmail } from "../../shared/http"
 
 const MAILER_MODULE = "mailer"
 
@@ -72,8 +73,19 @@ export const sendEventEmailsStep = createStep<
 
         let sent = 0
         let skipped = 0
+        const safeMappings = mappings as MappingRecord[]
+        const concurrency = Math.max(
+            1,
+            Math.min(10, Number(process.env.MAILER_SEND_CONCURRENCY || 2))
+        )
 
-        for (const mapping of mappings as MappingRecord[]) {
+        let index = 0
+        const runNext = async (): Promise<void> => {
+            if (index >= safeMappings.length) {
+                return
+            }
+
+            const mapping = safeMappings[index++]
             const recipientEmail = resolveEmail(
                 enrichedData,
                 input.event_name,
@@ -86,7 +98,13 @@ export const sendEventEmailsStep = createStep<
                 logger.warn(
                     `[Mailer] No email found for event ${input.event_name} (recipient_type: ${mapping.recipient_type})`
                 )
-                continue
+                return runNext()
+            }
+
+            if (!isValidEmail(recipientEmail)) {
+                skipped += 1
+                logger.warn(`[Mailer] Invalid recipient email for event ${input.event_name}`)
+                return runNext()
             }
 
             let templateVars: Record<string, string> = {}
@@ -121,7 +139,7 @@ export const sendEventEmailsStep = createStep<
                 logger.error(
                     `[Mailer] Template not found or invalid for event ${input.event_name}: ${mapping.template_name}`
                 )
-                continue
+                return runNext()
             }
 
             const idx = mapping.sender_index || 1
@@ -158,9 +176,14 @@ export const sendEventEmailsStep = createStep<
                 logger.error(
                     `[Mailer] Error sending email for event ${input.event_name}: ${err.message}`
                 )
-                throw err
+            } finally {
+                await runNext()
             }
         }
+
+        await Promise.all(
+            Array.from({ length: Math.min(concurrency, safeMappings.length) }, () => runNext())
+        )
 
         return new StepResponse({ sent, skipped }, undefined)
     }

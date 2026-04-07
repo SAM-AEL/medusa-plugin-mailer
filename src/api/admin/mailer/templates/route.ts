@@ -2,6 +2,7 @@ import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import * as fs from "fs"
 import * as path from "path"
 import { resolveTemplatesDir, resolveTemplatePath } from "../../../../shared/template-utils"
+import { fail, ok } from "../../../../shared/http"
 
 const BUILT_IN_VARS = ["RecipientEmail", "StoreName", "StoreURL", "SiteURL", "Subject"]
 
@@ -31,7 +32,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
     try {
         if (!fs.existsSync(resolvedDir)) {
-            return res.json({
+            return ok(res, {
                 templates: [],
                 message: "No templates directory found.",
                 using_fallback: usingFallback,
@@ -48,7 +49,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
             return { filename, variables }
         })
 
-        res.json({
+        return ok(res, {
             templates,
             directory: resolvedDir,
             using_fallback: usingFallback,
@@ -57,6 +58,9 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
             }),
         })
     } catch (error: any) {
-        res.status(500).json({ templates: [], error: error.message })
+        return fail(res, 500, "TEMPLATE_READ_FAILED", "Failed to load templates", {
+            templates: [],
+            reason: error.message,
+        })
     }
 }

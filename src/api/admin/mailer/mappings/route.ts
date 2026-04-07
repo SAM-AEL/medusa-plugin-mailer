@@ -1,21 +1,23 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { invalidateMailerCache } from "../../../../subscribers/mailer-event-handler"
+import { fail, normalizeTemplateVariables, ok, parsePagination } from "../../../../shared/http"
 
 const MAILER_MODULE = "mailer"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
     const mailerModule = req.scope.resolve(MAILER_MODULE)
+    const { limit, offset } = parsePagination(req.query as Record<string, unknown>)
 
     const [mappings, count] = await (mailerModule as any).listAndCountMailerEventMappings(
         {},
         {
-            take: Number(req.query.limit) || 50,
-            skip: Number(req.query.offset) || 0,
+            take: limit,
+            skip: offset,
             order: { created_at: "DESC" },
         }
     )
 
-    res.json({ mappings, count })
+    return ok(res, { mappings, count })
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -25,7 +27,11 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     const { event_name, template_name, sender_index, subject, template_variables, recipient_type, recipient_email, active } = body
 
     if (!event_name || !template_name) {
-        return res.status(400).json({ message: "event_name and template_name are required" })
+        return fail(res, 400, "INVALID_PAYLOAD", "event_name and template_name are required")
+    }
+
+    if (recipient_type === "custom" && (!recipient_email || typeof recipient_email !== "string")) {
+        return fail(res, 400, "INVALID_PAYLOAD", "recipient_email is required when recipient_type is custom")
     }
 
     const mapping = await (mailerModule as any).createMailerEventMappings({
@@ -33,7 +39,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         template_name,
         sender_index: sender_index || 1,
         subject: subject || "",
-        template_variables: template_variables || {},
+        template_variables: normalizeTemplateVariables(template_variables),
         recipient_type: recipient_type || "customer_email",
         recipient_email: recipient_type === "custom" ? recipient_email : null,
         active: active !== undefined ? active : true,
@@ -41,5 +47,5 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
     invalidateMailerCache()
 
-    res.status(201).json({ mapping })
+    return ok(res, { mapping }, 201)
 }

@@ -203,7 +203,7 @@ function MappingsSection() {
         const payload = { ...form, template_variables: variables }
 
         if (editingId) {
-            await api(`/mappings/${editingId}`, { method: "PUT", body: JSON.stringify(payload) })
+            await api(`/mappings/${editingId}`, { method: "POST", body: JSON.stringify(payload) })
             toast.success("Mapping updated")
         } else {
             await api("/mappings", { method: "POST", body: JSON.stringify(payload) })
