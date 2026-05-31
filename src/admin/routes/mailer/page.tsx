@@ -6,7 +6,7 @@ import { Container, Heading, Button, Input, Label, Switch, Table, Badge, Text, S
 import { useState, useEffect, useCallback } from "react"
 import { getSuggestedDataPathsForEvent, MAILER_EVENTS } from "../../../shared/mailer-fields"
 
-const BACKEND_URL = __BACKEND_URL__ ?? ""
+const BACKEND_URL = (__BACKEND_URL__ ?? "").replace(/\/+$/, "")
 
 async function api(path: string, options?: RequestInit) {
     const res = await fetch(`${BACKEND_URL}/admin/mailer${path}`, {
