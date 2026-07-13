@@ -1,7 +1,7 @@
 {
   "name": "@sam-ael/medusa-plugin-mailer",
-  "version": "0.1.4",
-  "description": "Send UI-managed email notifications on Medusa store events via SMTP.",
+  "version": "0.2.0",
+  "description": "Medusa v2 email notifications: hardcoded events, DB mappings (no seed), SMTP delivery.",
   "author": "SAM-AEL (https://www.github.com/SAM-AEL)",
   "homepage": "https://github.com/SAM-AEL",
   "repository": "https://github.com/SAM-AEL/medusa-plugin-mailer",
